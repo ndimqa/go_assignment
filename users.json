@@ -1,0 +1,22 @@
+{
+ "Users": [
+  {
+   "ID": 0,
+   "PASSWORD": "123456",
+   "Username": "qwerty",
+   "Mail": "qwerty@mail.ru"
+  },
+  {
+   "ID": 1,
+   "PASSWORD": "123456",
+   "Username": "qwert",
+   "Mail": ""
+  },
+  {
+   "ID": 2,
+   "PASSWORD": "123456",
+   "Username": "test",
+   "Mail": ""
+  }
+ ]
+}

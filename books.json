@@ -1,0 +1,38 @@
+{
+ "Books": [
+  {
+   "ID": 0,
+   "Title": "The Great Gatsby",
+   "Author": "F. Scott Fitzgerald",
+   "Price": 20.99,
+   "Rating": 0,
+   "AmounOfRating": 0,
+   "ListOfRatings": null
+  },
+  {
+   "ID": 1,
+   "Title": "War and Peace",
+   "Author": " Leo Tolstoy",
+   "Price": 12.99,
+   "Rating": 12,
+   "AmounOfRating": 6,
+   "ListOfRatings": [
+    3,
+    3,
+    8,
+    23,
+    0,
+    40
+   ]
+  },
+  {
+   "ID": 2,
+   "Title": "Don Quixote",
+   "Author": "Miguel de Cervantes",
+   "Price": 10.99,
+   "Rating": 0,
+   "AmounOfRating": 0,
+   "ListOfRatings": null
+  }
+ ]
+}
