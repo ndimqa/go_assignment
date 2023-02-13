@@ -46,7 +46,7 @@ http://127.0.0.1:8181/filter?sortBy={}?byAttribute={} (GET)
         "Author": "Miguel de Cervantes",
         "Price": 10.99,
         "Rating": 0,
-        "AmounOfRating": 0,
+        "AmountOfRating": 0,
         "ListOfRatings": []
     },
     {
@@ -55,7 +55,7 @@ http://127.0.0.1:8181/filter?sortBy={}?byAttribute={} (GET)
         "Author": " Leo Tolstoy",
         "Price": 12.99,
         "Rating": 0,
-        "AmounOfRating": 0,
+        "AmountOfRating": 0,
         "ListOfRatings": []
     },
     {
@@ -64,7 +64,7 @@ http://127.0.0.1:8181/filter?sortBy={}?byAttribute={} (GET)
         "Author": "F. Scott Fitzgerald",
         "Price": 20.99,
         "Rating": 0,
-        "AmounOfRating": 0,
+        "AmountOfRating": 0,
         "ListOfRatings": []
     }
 ]
@@ -126,7 +126,7 @@ http://127.0.0.1:8181/searh?Srch={} (GET)
     "Author": "Miguel de Cervantes",
     "Price": 10.99,
     "Rating": 0,
-    "AmounOfRating": 0,
+    "AmountOfRating": 0,
     "ListOfRatings": []
 }
 ```
