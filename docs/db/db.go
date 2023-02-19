@@ -1,7 +1,7 @@
 package db
 
 import (
-	"api/docs/books"
+	"api/docs/structs"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -15,9 +15,20 @@ func Init() *gorm.DB {
 		log.Fatal(err)
 		return nil
 	}
-	err2 := db.AutoMigrate(&books.Book{})
+
+	//err1 := db.AutoMigrate(&structs.Comment{})
+	//if err1 != nil {
+	//	return nil
+	//}
+
+	err2 := db.AutoMigrate(&structs.Book{})
 	if err2 != nil {
 		log.Fatal(err2)
+		return nil
+	}
+
+	err3 := db.AutoMigrate(&structs.User{})
+	if err3 != nil {
 		return nil
 	}
 

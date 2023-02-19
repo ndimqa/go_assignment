@@ -1,10 +1,4 @@
-package books
-
-import "math"
-
-type Books struct {
-	Books []Book `json:"books"`
-}
+package structs
 
 type Book struct {
 	ID             int     `json:"id" gorm:"primaryKey"`
@@ -14,13 +8,5 @@ type Book struct {
 	Rating         float64 `json:"rating"`
 	AmountOfRating int     `json:"amount_of_rating"`
 	SumOfRatings   int     `json:"sum_of_ratings"`
-}
-
-type BookInterface interface {
-	set_rating(rating int)
-}
-
-func (b *Book) set_rating(rating int) {
-	b.SumOfRatings = b.SumOfRatings + rating
-	b.Rating = math.Floor(float64(b.SumOfRatings) / float64(b.AmountOfRating))
+	// Comments       []Comment `json:"comments" gorm:"foreignKey:bookId"`
 }

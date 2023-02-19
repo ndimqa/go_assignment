@@ -1,42 +1,30 @@
 package requests
 
 import (
-	"api/docs/books"
+	"api/docs/structs"
 	"encoding/json"
 	"fmt"
+	"io"
+	"math"
 	"net/http"
+	"strconv"
+	"strings"
 )
 
+func (h handler) WelcomePage(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("TEST")
+	http.ServeFile(w, r, "front/index.html")
+}
+
 func (h handler) SetData(w http.ResponseWriter, r *http.Request) {
-	h.DB.Create(&books.Book{
+	h.DB.Create(&structs.Book{
 		ID: 1, Title: "War and Peace", Author: " Leo Tolstoy",
 		Price: 12.99, Rating: 12, AmountOfRating: 6, SumOfRatings: 12})
 	fmt.Println("COOL")
-
 }
 
-//	func find_book_by_id(id int) (books_pkg.Book, int) {
-//		data_books := generate_books().Books
-//		for i := 0; i < len(data_books); i++ {
-//			n := data_books[i]
-//			if n.ID == id {
-//				return n, i
-//			}
-//		}
-//		panic("There is no any book with this id")
-//	}
-//
-//	func find_user_by_name(name string) users_pkg.User {
-//		users := generate_users().Users
-//		for _, n := range users {
-//			if n.Username == name {
-//				return n
-//			}
-//		}
-//		return User{}
-//	}
-func (h handler) Get_all_items(w http.ResponseWriter, r *http.Request) {
-	var data_books []books.Book
+func (h handler) GetAllItems(w http.ResponseWriter, r *http.Request) {
+	var data_books []structs.Book
 	if result := h.DB.Find(&data_books); result.Error != nil {
 		fmt.Println(result.Error)
 	}
@@ -45,188 +33,267 @@ func (h handler) Get_all_items(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(data_books)
 }
 
-//
-//func Sort_by_price(sortBy string) []Book {
-//	data_books := generate_books().Books
-//	data := []Book{}
-//	data = append([]Book{}, data_books...)
-//	if sortBy == "asc" || sortBy == "" {
-//		sort.Slice(data, func(i, j int) bool {
-//			return data[i].Price < data[j].Price
-//		})
-//		return data
-//	} else if sortBy == "desc" {
-//		sort.Slice(data, func(i, j int) bool {
-//			return data[i].Price > data[j].Price
-//		})
-//		return data
-//	}
-//	fmt.Println("Sort_by_price something went wrong")
-//	return data
-//}
-//
-//func Sort_by_rating(sortBy string) []Book {
-//	data_books := generate_books().Books
-//	data := []Book{}
-//	data = append([]Book{}, data_books...)
-//	if sortBy == "asc" || sortBy == "" {
-//		sort.Slice(data, func(i, j int) bool {
-//			return data[i].Price < data[j].Price
-//		})
-//		return data
-//	} else if sortBy == "desc" {
-//		sort.Slice(data, func(i, j int) bool {
-//			return data[i].Rating > data[j].Rating
-//		})
-//		return data
-//	}
-//	fmt.Println("Sort_by_rating something went wrong")
-//	return data
-//}
-//
-//func (h handler) Filter(w http.ResponseWriter, r *http.Request) {
-//	fmt.Println("Filter request sent")
-//	sortBy := r.URL.Query().Get("sortBy")           // asc or desc
-//	byAttribute := r.URL.Query().Get("byAttribute") // price or rating
-//	result := []Book{}
-//	if byAttribute == "price" || byAttribute == "" {
-//		result = Sort_by_price(sortBy)
-//	} else if byAttribute == "rating" {
-//		result = Sort_by_rating(sortBy)
-//	}
-//	json.NewEncoder(w).Encode(result)
-//	fmt.Println("Filter request ended")
-//}
-//
-//func (h handler) GiveRating(w http.ResponseWriter, r *http.Request) {
-//	fmt.Println("GiveRating request sended")
-//	data_books := generate_books().Books
-//	x := map[string]int{}
-//	b, _ := io.ReadAll(r.Body)
-//	err := json.Unmarshal([]byte(b), &x)
-//	if err != nil {
-//		return
-//	}
-//	fmt.Println(x["id"])
-//	id := x["id"]         // id of book
-//	rating := x["rating"] // gaven rating
-//	exact_book, book_number := find_book_by_id(id)
-//	fmt.Println(exact_book)
-//	exact_book.set_rating(rating)
-//	fmt.Println(exact_book)
-//	data_books[book_number] = exact_book
-//	books := Books{data_books}
-//	save_rating_of_book(books)
-//}
-//
-//func (h handler) Register(w http.ResponseWriter, r *http.Request) {
-//	users := generate_users()
-//	fmt.Println("Register user request sended")
-//	x := map[string]string{}
-//	b, _ := io.ReadAll(r.Body)
-//	err := json.Unmarshal([]byte(b), &x)
-//	if err != nil {
-//		return
-//	}
-//	if find_user_by_name(x["username"]).Username == "" {
-//		fmt.Println("I GOT U BBY")
-//		id := len(users.Users)
-//		new_user := User{
-//			ID:       id,
-//			PASSWORD: x["password"],
-//			Username: x["username"],
-//			Mail:     x["Mail"],
-//		}
-//		users.Users = append(users.Users, new_user)
-//		save_user(users)
-//		w.WriteHeader(http.StatusOK)
-//		w.Header().Set("Content-Type", "application/json")
-//		resp := make(map[string]string)
-//		resp["message"] = "Status OK"
-//		jsonResp, err := json.Marshal(resp)
-//		if err != nil {
-//			fmt.Printf("Error happened in JSON marshal. Err: %s", err)
-//		}
-//		write, err := w.Write(jsonResp)
-//		if err != nil {
-//			return
-//		}
-//		return
-//	}
-//	w.WriteHeader(http.StatusForbidden)
-//	w.Header().Set("Content-Type", "application/json")
-//	resp := make(map[string]string)
-//	resp["message"] = "Change username, it already exists"
-//	jsonResp, err := json.Marshal(resp)
-//	if err != nil {
-//		fmt.Printf("Error happened in JSON marshal. Err: %s", err)
-//	}
-//	write, err := w.Write(jsonResp)
-//	if err != nil {
-//		return
-//	}
-//}
-//
-//func (h handler) LogIn(w http.ResponseWriter, r *http.Request) {
-//	fmt.Println("Login user request sended")
-//	x := map[string]string{}
-//	b, _ := io.ReadAll(r.Body)
-//	err := json.Unmarshal([]byte(b), &x)
-//	if err != nil {
-//		return
-//	}
-//	username := x["username"]
-//	user := find_user_by_name(username)
-//	if user.PASSWORD == x["password"] {
-//		w.WriteHeader(http.StatusOK)
-//		w.Header().Set("Content-Type", "application/json")
-//		resp := make(map[string]string)
-//		resp["message"] = "Status OK"
-//		jsonResp, err := json.Marshal(resp)
-//		if err != nil {
-//			fmt.Printf("Error happened in JSON marshal. Err: %s", err)
-//		}
-//		w.Write(jsonResp)
-//		return
-//	}
-//	w.WriteHeader(http.StatusForbidden)
-//	w.Header().Set("Content-Type", "application/json")
-//	resp := make(map[string]string)
-//	resp["message"] = "Status Not OK"
-//	jsonResp, err := json.Marshal(resp)
-//	if err != nil {
-//		fmt.Printf("Error happened in JSON marshal. Err: %s", err)
-//	}
-//	write, err := w.Write(jsonResp)
-//	if err != nil {
-//		return
-//	}
-//}
-//
-//func (h handler) Find(w http.ResponseWriter, r *http.Request) {
-//	fmt.Println("Find user request sended")
-//	var answer []Book
-//	search := strings.ToLower(r.URL.Query().Get("Srch"))
-//	data_books := generate_books().Books
-//	for i := 0; i < len(data_books); i++ {
-//		lower_name := strings.ToLower(data_books[i].Title)
-//		if strings.Contains(lower_name, search) == true {
-//			answer = append(answer, data_books[i])
-//		}
-//	}
-//	if len(answer) > 0 {
-//		json.NewEncoder(w).Encode(answer)
-//	}
-//	w.WriteHeader(http.StatusForbidden)
-//	w.Header().Set("Content-Type", "application/json")
-//	resp := make(map[string]string)
-//	resp["message"] = "There is nothing"
-//	jsonResp, err := json.Marshal(resp)
-//	if err != nil {
-//		fmt.Printf("Error happened in JSON marshal. Err: %s", err)
-//	}
-//	write, err := w.Write(jsonResp)
-//	if err != nil {
-//		return
-//	}
-//}
+func (h handler) SortByPrice(sortBy string) []structs.Book {
+	var data []structs.Book
+	if sortBy == "asc" || sortBy == "" {
+		h.DB.Order("price asc").Find(&data)
+		return data
+	} else if sortBy == "desc" {
+		h.DB.Order("price desc").Find(&data)
+		return data
+	}
+	fmt.Println("Sort_by_price something went wrong")
+	return data
+}
+
+func (h handler) SortByRating(sortBy string) []structs.Book {
+	var data []structs.Book
+	if sortBy == "asc" || sortBy == "" {
+		h.DB.Order("rating asc").Find(&data)
+		return data
+	} else if sortBy == "desc" {
+		h.DB.Order("price desc").Find(&data)
+		return data
+	}
+	fmt.Println("Sort_by_rating something went wrong")
+	return data
+}
+
+func (h handler) Filter(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Filter request sent")
+	sortBy := r.URL.Query().Get("sortBy")           // asc or desc
+	byAttribute := r.URL.Query().Get("byAttribute") // price or rating
+	var result []structs.Book
+	if byAttribute == "price" || byAttribute == "" {
+		result = h.SortByPrice(sortBy)
+	} else if byAttribute == "rating" {
+		result = h.SortByRating(sortBy)
+	}
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(result)
+	fmt.Println("Filter request ended")
+}
+
+func (h handler) GiveRating(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("GiveRating request sent")
+	var book structs.Book
+	x := map[string]int{}
+	b, _ := io.ReadAll(r.Body)
+	err := json.Unmarshal([]byte(b), &x)
+	if err != nil {
+		return
+	}
+	fmt.Println(x["id"])
+	fmt.Println(x["rating"])
+	id := x["id"]         // id of book
+	rating := x["rating"] // gaven rating
+	h.DB.First(&book, "id = ?", id)
+	book.AmountOfRating = book.AmountOfRating + 1
+	book.SumOfRatings = book.SumOfRatings + rating
+	fmt.Println(math.Round(float64(book.SumOfRatings / book.AmountOfRating)))
+	book.Rating = math.Round(float64(book.SumOfRatings / book.AmountOfRating))
+	h.DB.Save(book)
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+}
+
+func (h handler) Find(w http.ResponseWriter, r *http.Request) {
+	var books_list []structs.Book
+	fmt.Println("Find user request sended")
+	search := r.URL.Query().Get("Srch")
+	search = "%" + search + "%"
+	h.DB.Where("title LIKE ?", search).First(&books_list)
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(books_list)
+}
+
+func (h handler) Register(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Register user request sent")
+	var user structs.User
+	x := map[string]string{}
+	b, _ := io.ReadAll(r.Body)
+	err := json.Unmarshal([]byte(b), &x)
+	if err != nil {
+		return
+	}
+
+	h.DB.First(&user, "username = ?", x["username"])
+	if user.Username == "" {
+		fmt.Println("I GOT U BBY")
+		newUser := structs.User{
+			PASSWORD: x["password"],
+			Username: x["username"],
+			Mail:     x["mail"],
+			Role:     0,
+		}
+		h.DB.Save(&newUser)
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		resp := make(map[string]string)
+		resp["message"] = "Status OK"
+		jsonResp, err := json.Marshal(resp)
+		if err != nil {
+			fmt.Printf("Error happened in JSON marshal. Err: %s", err)
+		}
+		_, err = w.Write(jsonResp)
+		if err != nil {
+			return
+		}
+		return
+	}
+	w.WriteHeader(http.StatusForbidden)
+	w.Header().Set("Content-Type", "application/json")
+	resp := make(map[string]string)
+	resp["message"] = "Change username, it already exists"
+	jsonResp, err := json.Marshal(resp)
+	if err != nil {
+		fmt.Printf("Error happened in JSON marshal. Err: %s", err)
+	}
+	_, err = w.Write(jsonResp)
+	if err != nil {
+		return
+	}
+}
+
+func (h handler) LogIn(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Login user request sent")
+	x := map[string]string{}
+	b, _ := io.ReadAll(r.Body)
+	var user structs.User
+	err := json.Unmarshal([]byte(b), &x)
+	if err != nil {
+		return
+	}
+	h.DB.First(&user, "username = ?", x["username"])
+	if user.PASSWORD == x["password"] {
+		fmt.Println("Successfully Logged In")
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		resp := make(map[string]string)
+		resp["message"] = "Status OK"
+		jsonResp, err := json.Marshal(resp)
+		if err != nil {
+			fmt.Printf("Error happened in JSON marshal. Err: %s", err)
+		}
+		_, err = w.Write(jsonResp)
+		if err != nil {
+			return
+		}
+		return
+	}
+	w.WriteHeader(http.StatusForbidden)
+	w.Header().Set("Content-Type", "application/json")
+	resp := make(map[string]string)
+	resp["message"] = "Status Not OK"
+	jsonResp, err := json.Marshal(resp)
+	if err != nil {
+		fmt.Printf("Error happened in JSON marshal. Err: %s", err)
+	}
+	_, err = w.Write(jsonResp)
+	if err != nil {
+		return
+	}
+}
+
+func (h handler) PublishBook(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Publish request sent")
+	var user structs.User
+	x := map[string]string{}
+	b, _ := io.ReadAll(r.Body)
+	err := json.Unmarshal([]byte(b), &x)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		resp := make(map[string]string)
+		resp["message"] = "Status Not OK"
+		jsonResp, err := json.Marshal(resp)
+		if err != nil {
+			fmt.Printf("Error happened in JSON marshal. Err: %s", err)
+		}
+		_, err = w.Write(jsonResp)
+		if err != nil {
+			return
+		}
+	}
+	h.DB.First(&user, "username = ?", x["username"])
+	if user.Role != 0 {
+		price, err := strconv.ParseFloat(x["price"], 8)
+		book := structs.Book{
+			Title:          x["title"],
+			Author:         x["author"],
+			Price:          price,
+			Rating:         0,
+			AmountOfRating: 0,
+			SumOfRatings:   0,
+		}
+		h.DB.Save(&book)
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		resp := make(map[string]string)
+		resp["message"] = "Status OK"
+		jsonResp, err := json.Marshal(resp)
+		if err != nil {
+			fmt.Printf("Error happened in JSON marshal. Err: %s", err)
+		}
+		_, err = w.Write(jsonResp)
+		if err != nil {
+			return
+		}
+	}
+	w.WriteHeader(http.StatusForbidden)
+	w.Header().Set("Content-Type", "application/json")
+	resp := make(map[string]string)
+	resp["message"] = "You are not allowed to do this"
+	jsonResp, err := json.Marshal(resp)
+	if err != nil {
+		fmt.Printf("Error happened in JSON marshal. Err: %s", err)
+	}
+	_, err = w.Write(jsonResp)
+	if err != nil {
+		return
+	}
+}
+
+func (h handler) Purchase(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Purchase request sent")
+	x := map[string][]int{}
+	b, _ := io.ReadAll(r.Body)
+	err := json.Unmarshal([]byte(b), &x)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		resp := make(map[string]string)
+		resp["message"] = "Status Not OK"
+		jsonResp, err := json.Marshal(resp)
+		if err != nil {
+			fmt.Printf("Error happened in JSON marshal. Err: %s", err)
+		}
+		_, err = w.Write(jsonResp)
+		if err != nil {
+			return
+		}
+	}
+	var books []structs.Book
+	var books_titles []string
+	var book structs.Book
+	for _, value := range x["books_id"] {
+		h.DB.First(&book, "id = ?", value)
+		books = append(books, book)
+		books_titles = append(books_titles, book.Title)
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	resp := make(map[string]string)
+	string_response := strings.Join(books_titles, ", ")
+	resp["message"] = string_response
+	jsonResp, err := json.Marshal(resp)
+	if err != nil {
+		fmt.Printf("Error happened in JSON marshal. Err: %s", err)
+	}
+	_, err = w.Write(jsonResp)
+	if err != nil {
+		return
+	}
+}
