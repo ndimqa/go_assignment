@@ -25,7 +25,7 @@ func main() {
 	router.HandleFunc("/set_data", h.SetData).Methods("POST")
 	router.HandleFunc("/publish", h.PublishBook).Methods("POST")
 	router.HandleFunc("/purchase", h.Purchase).Methods("GET")
-	// commenting
+	router.HandleFunc("/comment_book", h.CreateComment).Methods("POST")
 	err := http.ListenAndServe(":8181", router)
 	if err != nil {
 		fmt.Println(err.Error())

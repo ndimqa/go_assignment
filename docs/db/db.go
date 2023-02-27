@@ -16,19 +16,8 @@ func Init() *gorm.DB {
 		return nil
 	}
 
-	//err1 := db.AutoMigrate(&structs.Comment{})
-	//if err1 != nil {
-	//	return nil
-	//}
-
-	err2 := db.AutoMigrate(&structs.Book{})
-	if err2 != nil {
-		log.Fatal(err2)
-		return nil
-	}
-
-	err3 := db.AutoMigrate(&structs.User{})
-	if err3 != nil {
+	err1 := db.AutoMigrate(&structs.Comment{}, &structs.Book{}, &structs.User{})
+	if err1 != nil {
 		return nil
 	}
 

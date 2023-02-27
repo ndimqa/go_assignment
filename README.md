@@ -5,7 +5,7 @@
 1) purchasing DONE
 2) publishing DONE
 3) welcome page DONE
-4) commenting ???
+4) commenting DONE
 5) Roles: admin, client, seller DONE 
 
 Также в описании проекта есть "Code should be clean, maintainable and follow SOLID principles. Also, containers have to be used (orchestrate by the use of docker compose)"
@@ -16,4 +16,4 @@
 
 Также вместо базы данных используется json local storage, а нужно использовать gorm ORM to store data into sql db DONE
 
-В контексте assignments, надо будет туда добавить дб, структуризировать файлы, сделать код более структурным, используя docker compose поднять контейнеры проекта, сервера и дб
+В контексте assignments, надо будет туда добавить дб, структуризировать файлы, сделать код более структурным, используя docker compose поднять контейнеры проекта, сервера и дб DONE

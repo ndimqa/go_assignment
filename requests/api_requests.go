@@ -297,3 +297,64 @@ func (h handler) Purchase(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (h handler) CreateComment(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("CreateComment request sent")
+	var user structs.User
+	var book structs.Book
+	x := map[string]string{}
+	b, _ := io.ReadAll(r.Body)
+	err := json.Unmarshal([]byte(b), &x)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		resp := make(map[string]string)
+		resp["message"] = "Status Not OK"
+		jsonResp, err := json.Marshal(resp)
+		if err != nil {
+			fmt.Printf("Error happened in JSON marshal. Err: %s", err)
+		}
+		_, err = w.Write(jsonResp)
+		if err != nil {
+			return
+		}
+	}
+	book_id, book_err := strconv.Atoi(x["book_id"])
+
+	if book_err != nil {
+		fmt.Println(book_err)
+		fmt.Println("Error during book conversion")
+		return
+	}
+	user_id, user_err := strconv.Atoi(x["user_id"])
+
+	if user_err != nil {
+		fmt.Println("Error during user conversion")
+		return
+	}
+	h.DB.First(&book, "id = ?", book_id)
+	h.DB.First(&user, "id = ?", user_id)
+	var count int64
+	h.DB.Table("comments").Count(&count)
+	comment := structs.Comment{
+		Id:     int(count),
+		UserId: user_id,
+		BookId: book_id,
+		Text:   x["comment_text"],
+	}
+	book.Comments = append(book.Comments, comment)
+	h.DB.Save(&book)
+	h.DB.Create(comment)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	resp := make(map[string]string)
+	resp["message"] = "Status OK"
+	jsonResp, err := json.Marshal(resp)
+	if err != nil {
+		fmt.Printf("Error happened in JSON marshal. Err: %s", err)
+	}
+	_, err = w.Write(jsonResp)
+	if err != nil {
+		return
+	}
+}
